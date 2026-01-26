@@ -86,7 +86,7 @@ def fmt(instrucs: list):
 
     return flat
 
-
+# Original code by __spetzers__. Changed it up a bit.
 def list_to_huge_string(data):
     raw = bytearray()
 
