@@ -1,0 +1,39 @@
+Deimos-8 specs
+
+16 8-bit registers (x0-xf)
+8 16-bit registers (ex0-ex7)
+4-bit FLAGS register (CARRY, GREATER, EQUAL, LESS)
+16-bit program counter
+64K PROM (65536*8)
+0.5hz clock (on tickspeed 20)
+Each instruction takes 5 bytes in memory
+
+Add .CR, .EQ, .GT, or .LT at the end of an instruction to make it conditional
+OPCODE  INSTRUCTION     FIRST_OPERAND    SECOND_OPERAND    THIRD_OPERAND    ACTION
+0H      NOP             NONE             NONE              NONE             Do nothing
+1H      LDI             8-REGISTER       IMMEDIATE         NONE             Load immediate into register
+2H      MOV             8-REGISTER       8-REGISTER        NONE             Copy a specific registers content and load it into another register
+3H      BTW             16-REGISTER      8-REGISTER HIGH   8-REGISTER LOW   Copy the contents from 2 8-bit registers into a 16-bit register
+4H      WTB             8-REGISTER HIGH  8-REGISTER LOW    16-REGISTER      Copy the contents of a 16-bit register and put it into 2 8-bit registers
+5H      ADD             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  Add the contents of 2 8-bit registers and store the output in a register
+6H      SUB             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  Subtract the contents of 2 8-bit registers and store the output in a register
+7H      MUL             16-REGISTER DST  8-REGISTER SRC1   8-REGISTER SRC2  Store the product of 2 8-bit registers in a 16-bit register
+8H      DIV             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  Divide the contents of 2 8-bit registers and store the output in a register
+9H      AND             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise AND
+AH      AND.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise AND
+BH      OR              8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise OR
+CH      OR.EXT          16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise OR
+DH      INV             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise invert
+EH      XOR             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise XOR
+FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise XOR
+10H     CMP             8-REGISTER DST   8-REGISTER DST    NONE             Compare 2 8-bit registers
+11H     CMP.EXT         16-REGISTER DST  16-REGISTER DST   NONE             Compare 2 16-bit registers
+12H     JMP             IMMEDIATE        NONE              NONE             8-bit jump
+13H     JMP.EXT         IMMEDIATE HIGH   IMMEDIATE LOW     NONE             16-bit far jump
+14H     INT             IMMEDIATE        NONE              NONE             Perform a software interrupt
+15H     HLT             NONE             NONE              NONE             Halt the clock.
+
+Interrupts:
+0h: unlisted (x0, x1, x2, x3)
+1h: tty call (character, location) [x0=255=clear tty, x0=254=toggle enabled] // write, clear and toggle the TextConsole/TTY
+2h: keyboard call () // get last key pressed and store in x0
