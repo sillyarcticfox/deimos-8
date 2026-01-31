@@ -53,7 +53,7 @@ def readf(fp: str) -> list[str]:
     with open(fp, "rt") as f:
         return [line.strip() for line in f.read().splitlines()]
 
-def fmt(instrucs: list):
+def fmt(instrucs: list, start_offset: int = 0):
     known_labels = {}
 
     for i, instruc in enumerate(instrucs):
@@ -63,11 +63,14 @@ def fmt(instrucs: list):
                 instrucs[i][j] = u8(int(inop[:-1], 16))
             if inop.isnumeric():
                 instrucs[i][j] = u8(int(inop, 10))
-            if inop.startswith('.') and inop.endswith(':'):
-                known_labels[inop.replace(':', '')] = i*5
+            if isinstance(inop, str) and inop.startswith('.') and inop.endswith(':'):
+                known_labels[inop.replace(':', '')] = i * 5
                 instrucs[i] = [-1]
-    
+
     for i, instruc in enumerate(instrucs):
+        if instruc == [-1]:
+            continue
+
         for j, inop in enumerate(instruc):
             if isinstance(inop, int):
                 continue
@@ -94,15 +97,15 @@ def fmt(instrucs: list):
                         break
                 else:
                     raise ValueError(f"Invalid operand: {inop}")
-    
+
     instrucs = [instruc for instruc in instrucs if instruc != [-1] and instruc != ['']]
 
     for instruc in instrucs:
         instruc += [0] * (5 - len(instruc))
-    
-    flat = [item for sublist in instrucs for item in sublist]
 
-    return flat
+    flat = [0] * ((start_offset + 1) * 5) + [item for sublist in instrucs for item in sublist]
+
+    return flat, instrucs
 
 # Original code by __spetzers__. Changed it up quite a bit.
 def list_to_huge_string(data):
@@ -115,12 +118,15 @@ def list_to_huge_string(data):
         raw.append(value & 0xFF)
         raw.append((value >> 8) & 0xFF)
 
+    print(raw[:256])
+
     compressed = zlib.compress(raw, level=2, wbits=-15)
     encoded = base64.b64encode(compressed).decode("utf-8").strip("=")
 
     return encoded, data
 
-result = list_to_huge_string(fmt(readf("src/assemble/input.s")))
-print(result)
-print("Result written to ./out/asm_output.")
-with open("out/asm_output", "wt") as f: f.write(result[0])
+if __name__ == '__main__':
+    result = list_to_huge_string(fmt(readf("/home/arcticfox/Projects/deimos-8/src/assemble/input.s"))[0])
+    print(result)
+    print("Result written to ./out/asm_output.")
+    with open("/home/arcticfox/Projects/deimos-8/out/asm_output", "wt") as f: f.write(result[0])
