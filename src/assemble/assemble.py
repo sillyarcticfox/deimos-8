@@ -81,7 +81,7 @@ def fmt(instrucs: list, start_offset: int = 0):
             elif inop in instruction_opcodes:
                 instrucs[i][j] = instruction_opcodes[inop]
             else:
-                suffix_map = {'.cr': 1, '.gt': 2, '.eq': 3, '.lt': 4}
+                suffix_map = {'.gt': 1, '.eq': 2, '.lt': 3}
                 for suffix, value in suffix_map.items():
                     if inop.endswith(suffix):
                         base_op = inop[:-len(suffix)]
