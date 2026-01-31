@@ -1,7 +1,4 @@
-ldi x0 5
-ldi x1 3
-add x2 x0 x1
-sub x3 x0 x1
-mul ex0 x0 x1
-div x4 x0 x1
-hlt
+ldi ex0 ffh
+ldi x0 afh
+str ex0 x0
+lod ex0 x1

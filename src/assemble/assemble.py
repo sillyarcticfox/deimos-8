@@ -46,7 +46,9 @@ instruction_opcodes = {
     "jmp": 0x12,
     "jmp.ext": 0x13,
     "int": 0x14,
-    "hlt": 0x15,
+    "lod": 0x15,
+    "str": 0x16,
+    "hlt": 0x17,
 }
 
 def readf(fp: str) -> list[str]:
@@ -81,7 +83,7 @@ def fmt(instrucs: list, start_offset: int = 0):
             elif inop in instruction_opcodes:
                 instrucs[i][j] = instruction_opcodes[inop]
             else:
-                suffix_map = {'.gt': 1, '.eq': 2, '.lt': 3}
+                suffix_map = {'.gt': 1, '.eq': 2, '.lt': 4}
                 for suffix, value in suffix_map.items():
                     if inop.endswith(suffix):
                         base_op = inop[:-len(suffix)]
@@ -117,8 +119,6 @@ def list_to_huge_string(data):
         
         raw.append(value & 0xFF)
         raw.append((value >> 8) & 0xFF)
-
-    print(raw[:256])
 
     compressed = zlib.compress(raw, level=2, wbits=-15)
     encoded = base64.b64encode(compressed).decode("utf-8").strip("=")

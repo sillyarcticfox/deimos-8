@@ -2,8 +2,6 @@ from assemble import fmt, readf, u8, u16 #type:ignore #I don't know why vscode t
 from assemble import registers as register_to_int #type:ignore 
 import time
 
-# Python 3.7+ required
-
 registers = {}
 for i in register_to_int.values():
     registers[i] = 0
@@ -14,14 +12,15 @@ registers['ir3'] = 0
 registers['ir4'] = 0
 registers['pc'] = 0
 registers['gt'] = 0
-registers['eq'] = 1
+registers['eq'] = 0
 registers['lt'] = 0
 
 memory = [0] * 65536 # Memory
-clockspeed = int(input("Clock frequency (Hz): ")) # Clock frequency
 
 program = fmt(readf("/home/arcticfox/Projects/deimos-8/src/assemble/input.s"))
 print("PROGRAM:", program[1])
+
+clockspeed = int(input("Clock frequency (Hz): ")) # Clock frequency
 
 for i, inop in enumerate(program[0]):
     memory[i] = inop
@@ -45,7 +44,7 @@ while not halted:
     match registers['ir4']:
         case 1: cond = bool(registers['gt'])
         case 2: cond = bool(registers['eq'])
-        case 3: cond = bool(registers['lt'])
+        case 4: cond = bool(registers['lt'])
 
     if cond:
         match registers['ir0']:
@@ -70,6 +69,29 @@ while not halted:
                 registers[registers['ir1']] = u16(registers[registers['ir2']] * registers[registers['ir3']])
             case 8: # div
                 registers[registers['ir1']] = u8(round(registers[registers['ir2']] / registers[registers['ir3']]))
+            case 9: # and
+                registers[registers['ir1']] = u8(registers[registers['ir2']] & registers[registers['ir3']])
+            case 10: # and.ext
+                if registers['ir1'] < 16 or registers['ir2'] < 16 or registers['ir3'] < 16:
+                    print("Extended bitwise needs all 3 operands to be extended registers, halting.")
+                    halted = True
+                registers[registers['ir1']] = u16(registers[registers['ir2']] & registers[registers['ir3']])
+            case 11: # or
+                registers[registers['ir1']] = u8(registers[registers['ir2']] | registers[registers['ir3']])
+            case 12: # or.ext
+                if registers['ir1'] < 16 or registers['ir2'] < 16 or registers['ir3'] < 16:
+                    print("Extended bitwise needs all 3 operands to be extended registers, halting.")
+                    halted = True
+                registers[registers['ir1']] = u16(registers[registers['ir2']] | registers[registers['ir3']])
+            case 13: # inv
+                registers[registers['ir1']] = u8(~(registers[registers['ir2']]))
+            case 14: # xor
+                registers[registers['ir1']] = u8(registers[registers['ir2']] ^ registers[registers['ir3']])
+            case 15: # xor.ext
+                if registers['ir1'] < 16 or registers['ir2'] < 16 or registers['ir3'] < 16:
+                    print("Extended bitwise needs all 3 operands to be extended registers, halting.")
+                    halted = True
+                registers[registers['ir1']] = u16(registers[registers['ir2']] ^ registers[registers['ir3']])
             case 16: # cmp
                 registers['gt'] = False
                 registers['eq'] = False
@@ -80,7 +102,14 @@ while not halted:
                     registers['eq'] = True
                 elif u8(registers[registers['ir1']]) < u8(registers[registers['ir2']]):
                     registers['lt'] = True
-            case 21: # hlt
+            case 18: # jmp
+                registers['pc'] = registers['ir1']
+                continue
+            case 21: # lod
+                registers[registers['ir2']] = memory[registers[registers['ir1']]]
+            case 22: # str
+                memory[registers[registers['ir1']]] = registers[registers['ir2']]
+            case 23: # hlt
                 halted = True
             case _:
                 print("Opcode invalid, halting.")
@@ -88,4 +117,18 @@ while not halted:
 
     registers['pc'] += 5
 
-print("\n==========================================================================================================\n\nREGISTER DUMP:", registers)
+print("\n==========================================================================================================\n\nREGISTER DUMP:\n")
+
+for k, v in registers.items():
+    try:
+        int(k)
+        if k < 16: k = f'x{hex(k).replace('0x', '')}'
+        else: k = f'ex{hex(k-16).replace('0x', '')}'
+    except ValueError: ...
+    print(k, ':', hex(v).replace('0x', '')+'h')
+
+
+with open("/home/arcticfox/Projects/deimos-8/out/MEMDUMP", "w") as f:
+    for i in range(0, len(memory), 16):
+        line = memory[i:i+16]
+        f.write(" ".join(map(str, line)) + "\n")

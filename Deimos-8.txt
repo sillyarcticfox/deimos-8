@@ -23,7 +23,7 @@ OPCODE  INSTRUCTION     FIRST_OPERAND    SECOND_OPERAND    THIRD_OPERAND    ACTI
 AH      AND.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise AND
 BH      OR              8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise OR
 CH      OR.EXT          16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise OR
-DH      INV             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise invert
+DH      INV             8-REGISTER DST   8-REGISTER SRC    NONE             8-bit bitwise invert
 EH      XOR             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise XOR
 FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise XOR
 10H     CMP             8-REGISTER DST   8-REGISTER DST    NONE             Compare 2 8-bit registers
@@ -31,7 +31,9 @@ FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-b
 12H     JMP             IMMEDIATE        NONE              NONE             8-bit jump
 13H     JMP.EXT         IMMEDIATE HIGH   IMMEDIATE LOW     NONE             16-bit far jump
 14H     INT             IMMEDIATE        NONE              NONE             Perform a software interrupt
-15H     HLT             NONE             NONE              NONE             Halt the clock.
+15H     LOD             16-REGISTER ADDR 8-REGISTER VALUE  NONE             Load a value from memory into a register
+16H     STR             16-REGISTER ADDR 8-REGISTER VALUE  NONE             Store a value from a register in memory
+17H     HLT             NONE             NONE              NONE             Halt the clock.
 
 Interrupts:
 0h: unlisted (x0, x1, x2, x3)
