@@ -1,5 +1,5 @@
 from assemble import fmt, readf, u8, u16 #type:ignore #I don't know why vscode thinks fmt and readf don't exist
-from assemble import registers as register_to_int #type:ignore 
+from assemble import registers as register_to_int #type:ignore
 import time
 
 registers = {}
@@ -16,11 +16,13 @@ registers['eq'] = 0
 registers['lt'] = 0
 
 memory = [0] * 65536 # Memory
+tty = [''] * 256 # TTY Memory
 
 program = fmt(readf("/home/arcticfox/Projects/deimos-8/src/assemble/input.s"))
 print("PROGRAM:", program[1])
 
 clockspeed = int(input("Clock frequency (Hz): ")) # Clock frequency
+ttymode = input("TTY Mode? (y/N) ") # TTY Mode
 
 for i, inop in enumerate(program[0]):
     memory[i] = inop
@@ -37,7 +39,9 @@ while not halted:
         except IndexError:
             print("Program counter overflow, halting.")
             halted = True
-    print(registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]))
+    if ttymode != 'y':
+        print(registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]))
+
 
     cond = True
 
@@ -58,6 +62,9 @@ while not halted:
                     print("Byte to word destination must be a 16-bit register, halting.")
                     halted = True
                 registers[registers['ir1']] = ((registers[registers['ir2']] << 8) | registers[registers['ir3']])
+            case 4: # wtb
+                registers[registers['ir1']] = (registers[registers['ir3']] >> 8) & 0xff
+                registers[registers['ir2']] = registers[registers['ir3']] & 0xff
             case 5: # add
                 registers[registers['ir1']] = u8(registers[registers['ir2']] + registers[registers['ir3']])
             case 6: # sub
@@ -105,6 +112,25 @@ while not halted:
             case 18: # jmp
                 registers['pc'] = registers['ir1']
                 continue
+            case 19: # jmp.ext
+                registers['pc'] = ((registers[registers['ir1']] << 8) | registers[registers['ir2']])
+                continue
+            case 20: # int
+                match registers['ir1']:
+                    case 1:
+                        if registers[0] == 255:
+                            tty = [''] * 256
+                        else:
+                            tty[registers[1]] = chr(registers[0])
+                    case 2:
+                        key = input("> ")
+                        if len(key) != 1:
+                            print("Input must be 1 character exactly, halting.")
+                            halted = True
+                        registers[0] = ord(key)
+                    case _:
+                        print("Interrupt not implemented, halting.")
+                        halted = True
             case 21: # lod
                 registers[registers['ir2']] = memory[registers[registers['ir1']]]
             case 22: # str
@@ -115,6 +141,12 @@ while not halted:
                 print("Opcode invalid, halting.")
                 halted = True
 
+    if ttymode == 'y':
+        for row in range(8):
+            start = row * 32
+            end = start + 32
+            print("".join(tty[start:end]))
+        print("".join(['=']*32))
     registers['pc'] += 5
 
 print("\n==========================================================================================================\n\nREGISTER DUMP:\n")

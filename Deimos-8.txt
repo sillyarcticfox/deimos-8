@@ -37,5 +37,5 @@ FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-b
 
 Interrupts:
 0h: unlisted (x0, x1, x2, x3)
-1h: tty call (character, location) [x0=255=clear tty, x0=254=toggle enabled] // write, clear and toggle the TextConsole/TTY
-2h: keyboard call () // get last key pressed and store in x0
+1h: tty call (character, location) [x0=255=clear tty, x0=254=toggle enabled] // write, clear and toggle the TextConsole - toggle not supported in emulator
+2h: keyboard call () // get last key pressed
