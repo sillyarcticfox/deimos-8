@@ -12,7 +12,7 @@ Add .CR, .EQ, .GT, or .LT at the end of an instruction to make it conditional
 OPCODE  INSTRUCTION     FIRST_OPERAND    SECOND_OPERAND    THIRD_OPERAND    ACTION
 0H      NOP             NONE             NONE              NONE             Do nothing
 1H      LDI             8-REGISTER       IMMEDIATE         NONE             Load immediate into register
-2H      MOV             8-REGISTER       8-REGISTER        NONE             Copy a specific registers content and load it into another register
+2H      MOV             REGISTER         REGISTER          NONE             Copy a specific registers content and load it into another register
 3H      BTW             16-REGISTER      8-REGISTER HIGH   8-REGISTER LOW   Copy the contents from 2 8-bit registers into a 16-bit register
 4H      WTB             8-REGISTER HIGH  8-REGISTER LOW    16-REGISTER      Copy the contents of a 16-bit register and put it into 2 8-bit registers
 5H      ADD             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  Add the contents of 2 8-bit registers and store the output in a register

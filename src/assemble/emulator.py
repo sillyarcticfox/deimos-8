@@ -1,6 +1,20 @@
 from assemble import fmt, readf, u8, u16 #type:ignore #I don't know why vscode thinks fmt and readf don't exist
 from assemble import registers as register_to_int #type:ignore
-import time
+import time, sys, termios
+import tty as tty_mod
+
+def getch(prompt=""):
+    if prompt:
+        sys.stdout.write(prompt)
+        sys.stdout.flush()
+
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        tty_mod.setraw(fd)
+        return sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
 
 registers = {}
 for i in register_to_int.values():
@@ -40,7 +54,7 @@ while not halted:
             print("Program counter overflow, halting.")
             halted = True
     if ttymode != 'y':
-        print(registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]))
+        print(registers['pc'], registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]))
 
 
     cond = True
@@ -52,7 +66,8 @@ while not halted:
 
     if cond:
         match registers['ir0']:
-            case 0: ...
+            case 0: # nop
+                ...
             case 1: # ldi
                 registers[registers['ir1']] = u8(registers['ir2'])
             case 2: # mov
@@ -123,11 +138,7 @@ while not halted:
                         else:
                             tty[registers[1]] = chr(registers[0])
                     case 2:
-                        key = input("> ")
-                        if len(key) != 1:
-                            print("Input must be 1 character exactly, halting.")
-                            halted = True
-                        registers[0] = ord(key)
+                        registers[0] = ord(getch('> '))
                     case _:
                         print("Interrupt not implemented, halting.")
                         halted = True

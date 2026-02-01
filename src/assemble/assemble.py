@@ -66,8 +66,8 @@ def fmt(instrucs: list, start_offset: int = 0):
             if inop.isnumeric():
                 instrucs[i][j] = u8(int(inop, 10))
             if isinstance(inop, str) and inop.startswith('.') and inop.endswith(':'):
-                known_labels[inop.replace(':', '')] = i * 5
-                instrucs[i] = [-1]
+                known_labels[inop.replace(':', '')] = (i + 1) * 5
+                instrucs[i] = [0, 0, 0, 0, 0]
 
     for i, instruc in enumerate(instrucs):
         if instruc == [-1]:
