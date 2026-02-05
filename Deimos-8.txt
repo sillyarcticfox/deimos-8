@@ -8,7 +8,7 @@ Deimos-8 specs
 0.5hz clock (on tickspeed 20)
 Each instruction takes 5 bytes in memory
 
-Add .CR, .EQ, .GT, or .LT at the end of an instruction to make it conditional
+Add .EQ, .GT, or .LT at the end of an instruction to make it conditional
 OPCODE  INSTRUCTION     FIRST_OPERAND    SECOND_OPERAND    THIRD_OPERAND    ACTION
 0H      NOP             NONE             NONE              NONE             Do nothing
 1H      LDI             8-REGISTER       IMMEDIATE         NONE             Load immediate into register
@@ -26,8 +26,8 @@ CH      OR.EXT          16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-b
 DH      INV             8-REGISTER DST   8-REGISTER SRC    NONE             8-bit bitwise invert
 EH      XOR             8-REGISTER DST   8-REGISTER SRC1   8-REGISTER SRC2  8-bit bitwise XOR
 FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-bit bitwise XOR
-10H     CMP             8-REGISTER DST   8-REGISTER DST    NONE             Compare 2 8-bit registers
-11H     CMP.EXT         16-REGISTER DST  16-REGISTER DST   NONE             Compare 2 16-bit registers
+10H     CMP             8-REGISTER SRC1  8-REGISTER SRC2   NONE             Compare 2 8-bit registers
+11H     CMP.EXT         16-REGISTER SRC1 16-REGISTER SRC2  NONE             Compare 2 16-bit registers
 12H     JMP             IMMEDIATE        NONE              NONE             8-bit jump
 13H     JMP.EXT         IMMEDIATE HIGH   IMMEDIATE LOW     NONE             16-bit far jump
 14H     INT             IMMEDIATE        NONE              NONE             Perform a software interrupt
@@ -36,6 +36,5 @@ FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-b
 17H     HLT             NONE             NONE              NONE             Halt the clock.
 
 Interrupts:
-0h: unlisted (x0, x1, x2, x3)
 1h: tty call (character, location) [x0=255=clear tty, x0=254=toggle enabled] // write, clear and toggle the TextConsole - toggle not supported in emulator
 2h: keyboard call () // get last key pressed

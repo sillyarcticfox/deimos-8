@@ -124,6 +124,19 @@ while not halted:
                     registers['eq'] = True
                 elif u8(registers[registers['ir1']]) < u8(registers[registers['ir2']]):
                     registers['lt'] = True
+            case 17: # cmp.ext
+                if registers['ir1'] < 16 or registers['ir2'] < 16:
+                    print("Extended comparison needs both operands to be extended registers, halting.")
+                    halted = True
+                registers['gt'] = False
+                registers['eq'] = False
+                registers['lt'] = False
+                if u16(registers[registers['ir1']]) > u16(registers[registers['ir2']]):
+                    registers['gt'] = True
+                elif u16(registers[registers['ir1']]) == u16(registers[registers['ir2']]):
+                    registers['eq'] = True
+                elif u16(registers[registers['ir1']]) < u16(registers[registers['ir2']]):
+                    registers['lt'] = True
             case 18: # jmp
                 registers['pc'] = registers['ir1']
                 continue
