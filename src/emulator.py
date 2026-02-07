@@ -151,8 +151,12 @@ while not halted:
                     case 1:
                         if registers[0] == 255:
                             tty = [''] * 256
+                            for i in range(256):
+                                memory[i+0x8000] = 0
                         else:
                             tty[registers[1]] = chr(registers[0])
+                            memory[registers[1]+0x8000] = registers[0]
+                            
                     case 2:
                         registers[0] = ord(getch('> '))
                     case _:
