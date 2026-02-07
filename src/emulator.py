@@ -57,7 +57,7 @@ while not halted:
             print("Program counter overflow, halting.")
             halted = True
     if ttymode != 'y':
-        print(registers['pc'], registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]))
+        print(registers['pc'], registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]), flush=True)
 
 
     cond = True
@@ -172,8 +172,8 @@ while not halted:
         for row in range(8):
             start = row * 32
             end = start + 32
-            print("".join(tty[start:end]))
-        print("".join(['=']*32))
+            print("".join(tty[start:end]), flush=True)
+        print("".join(['=']*32), flush=True)
     registers['pc'] += 5
 
 print("\n==========================================================================================================\n\nREGISTER DUMP:\n")
