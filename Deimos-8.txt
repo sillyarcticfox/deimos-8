@@ -4,7 +4,7 @@ Deimos-8 specs
 8 16-bit registers (ex0-ex7)
 4-bit FLAGS register (CARRY, GREATER, EQUAL, LESS)
 16-bit program counter
-64K PROM (65536*8)
+64K PROM (65536*8).
 0.5hz clock (on tickspeed 20)
 Each instruction takes 5 bytes in memory
 
@@ -36,5 +36,5 @@ FH      XOR.EXT         16-REGISTER DST  16-REGISTER SRC1  16-REGISTER SRC2 16-b
 17H     HLT             NONE             NONE              NONE             Halt the clock.
 
 Interrupts:
-1h: tty call (character, location) [x0=255=clear tty, x0=254=toggle enabled] // write, clear and toggle the TextConsole - toggle not supported in emulator, writing to tty also writes to memory (8000-8fff)
+1h: tty call (character, location) [x0=255=clear tty] // write to the TextConsole. writing to tty also writes to memory (8000-80ff)
 2h: keyboard call () // get last key pressed
