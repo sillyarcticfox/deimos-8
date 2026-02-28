@@ -115,7 +115,7 @@ def fmt(instrucs: list, start_offset: int = 0):
 def list_to_raw64(data: list, fp: str):
     with open(sys.argv[2], "wb") as f:
         for n in data:
-            f.write(n.to_bytes(8, byteorder="big", signed=False))
+            f.write(n.to_bytes(8, byteorder="little", signed=False))
 
 if __name__ == '__main__':
     list_to_raw64(fmt(readf(sys.argv[1]))[0], sys.argv[2])
