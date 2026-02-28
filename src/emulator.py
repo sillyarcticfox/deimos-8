@@ -27,7 +27,7 @@ registers['ir1'] = 0
 registers['ir2'] = 0
 registers['ir3'] = 0
 registers['ir4'] = 0
-registers['pc'] = 0
+registers[0x25] = 0
 registers['gt'] = 0
 registers['eq'] = 0
 registers['lt'] = 0
@@ -52,12 +52,12 @@ while not halted:
         
     for i in range(5):
         try:
-            registers[f'ir{i}'] = memory[registers['pc']+i]
+            registers[f'ir{i}'] = memory[registers[0x25]+i]
         except IndexError:
             print("Program counter overflow, halting.")
             halted = True
     if ttymode != 'y':
-        print(registers['pc'], registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]), flush=True)
+        print(registers[0x25], registers['ir0'], registers['ir1'], registers['ir2'], registers['ir3'], registers['ir4'], dict(list(registers.items())[:24]), flush=True)
 
 
     cond = True
@@ -141,10 +141,10 @@ while not halted:
                 elif u16(registers[registers['ir1']]) < u16(registers[registers['ir2']]):
                     registers['lt'] = True
             case 18: # jmp
-                registers['pc'] = registers['ir1']
+                registers[0x25] = registers['ir1']
                 continue
             case 19: # jmp.ext
-                registers['pc'] = ((registers[registers['ir1']] << 8) | registers[registers['ir2']])
+                registers[0x25] = ((registers[registers['ir1']] << 8) | registers[registers['ir2']])
                 continue
             case 20: # int
                 match registers['ir1']:
@@ -178,7 +178,7 @@ while not halted:
             end = start + 32
             print("".join(tty[start:end]), flush=True)
         print("".join(['=']*32), flush=True)
-    registers['pc'] += 5
+    registers[0x25] += 5
 
 print("\n==========================================================================================================\n\nREGISTER DUMP:\n")
 
