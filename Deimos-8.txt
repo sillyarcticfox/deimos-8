@@ -2,7 +2,7 @@ Deimos-8 specs
 
 16 8-bit registers (x0-xf)
 8 16-bit registers (ex0-ex7)
-4-bit FLAGS register (CARRY, GREATER, EQUAL, LESS)
+3-bit FLAGS register (GREATER, EQUAL, LESS)
 16-bit program counter. From ISA 26.14.5, pc can be referenced as a register.
 64K PROM (65536*8).
 0.5hz clock (on tickspeed 20)

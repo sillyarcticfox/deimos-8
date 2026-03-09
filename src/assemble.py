@@ -128,8 +128,14 @@ def list_to_huge_string(data):
 
     return encoded, data
 
+def list_to_hex(data):
+    raw = bytearray(data)
+    with open(f'{sys.argv[2]}.logisim', 'wb') as f:
+        f.write(raw)
+
 if __name__ == '__main__':
     result = list_to_huge_string(fmt(readf(sys.argv[1]))[0])
+    list_to_hex(fmt(readf(sys.argv[1]))[0])
     print(result)
-    print(f"Result written to {sys.argv[2]}")
+    print(f"Result written to {sys.argv[2]}, written logisim to {sys.argv[2]}.logisim")
     with open(sys.argv[2], "wt") as f: f.write(result[0])
